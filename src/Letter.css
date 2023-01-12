@@ -1,0 +1,23 @@
+.letter {
+	width: 4vw;
+	aspect-ratio: 1;
+	border: 2px solid gray;
+	margin: 3px;
+	font-weight: bolder;
+	font-size: 3vw;
+	text-transform: uppercase;
+	outline: none;
+	user-select: none;
+}
+
+.letter.green {
+	background-color: #6aaa64;
+}
+
+.letter.yellow {
+	background-color: #c9b458;
+}
+
+.letter:hover {
+	border-color: white;
+}
