@@ -43,7 +43,7 @@ function buildRegex(word, colors, badLetters) {
 
 	regexString += "$";
 
-	return regexString;
+	return new RegExp(regexString);
 }
 
 export default buildRegex;

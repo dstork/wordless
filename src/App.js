@@ -23,8 +23,7 @@ function App() {
 	));
 
 	const showWords = () => {
-		const regexString = buildRegex(word.toLowerCase(), colors, badLetters);
-		const r = new RegExp(regexString);
+		const regex = buildRegex(word.toLowerCase(), colors, badLetters);
 
 		// filter all words satisfying this condition/regex
 		fetch(wf)
@@ -33,7 +32,7 @@ function App() {
 				const words = lines.split("\n");
 				const matches = words.filter(word => {
 					const ws = word.split(" ");
-					return ws[0].match(r);
+					return ws[0].match(regex);
 				});
 
 				const sorted_matches = matches.map(match => {
