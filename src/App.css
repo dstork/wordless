@@ -2,25 +2,6 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-textarea {
-	background-color: #282c34;
-	margin-top: 4vh;
-	font-size: "3vh";
-	color: white;
-}
-
-.word {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: fit-content;
-}
-
 #badLetters {
 	width: 35vw;
 	height: 4vw;
@@ -33,36 +14,35 @@ textarea {
 	font-weight: bolder;
 }
 
+#footerBar {
+	height: 7vh;
+	width: 100vw;
+	border-top: 2px solid gray;
+	position: fixed;
+	display: flex;
+	justify-content: right;
+	align-items: center;
+	bottom: 0px;
+	background-color: #282c34;
+}
+
 #showMe {
-	margin-top: 8vh;
-	background-color: green;
+	background-color: #6aaa64;
 	font-weight: bolder;
 	border: 0px;
 	border-radius: 0.5vh;
 	width: 15vh;
 	aspect-ratio: 3 / 1;
+	margin-right: 1vh;
 }
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 93vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
 }

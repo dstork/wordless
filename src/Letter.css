@@ -1,5 +1,5 @@
 .letter {
-	width: 4vw;
+	width: 5vw;
 	aspect-ratio: 1;
 	border: 2px solid gray;
 	margin: 3px;
@@ -8,6 +8,13 @@
 	text-transform: uppercase;
 	outline: none;
 	user-select: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.letter.gray {
+	background-color: #787c7e;
 }
 
 .letter.green {
