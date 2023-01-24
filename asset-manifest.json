@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.cad875c2.css",
+    "main.js": "/static/js/main.7671fa24.js",
+    "static/js/787.b1882d14.chunk.js": "/static/js/787.b1882d14.chunk.js",
+    "static/media/wordle_frequency.txt": "/static/media/wordle_frequency.76bfe8268f195cb5b3e8.txt",
+    "index.html": "/index.html",
+    "main.cad875c2.css.map": "/static/css/main.cad875c2.css.map",
+    "main.7671fa24.js.map": "/static/js/main.7671fa24.js.map",
+    "787.b1882d14.chunk.js.map": "/static/js/787.b1882d14.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cad875c2.css",
+    "static/js/main.7671fa24.js"
+  ]
+}
