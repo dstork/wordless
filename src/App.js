@@ -16,6 +16,8 @@ function App() {
 
 	const [badLetters, setBadLetters] = useState("");
 
+	const [errorState, setErrorState] = useState(false);
+
 	const htmlDiv = useRef(null);
 
 	const replaceLtr = (word, idx, ltr) => {
@@ -30,11 +32,14 @@ function App() {
 		});
 	};
 
-	let entries = [];
+	const resetErrorState = setErrorState.bind(null, false);
+
+	const entries = [];
 	for (let i = 0; i < words.length; i++) {
-		// entries.push(<Word word={words[i]} colors={colors[i]} setColors={colors => setColors(cols => cols[i] = colors)} editable={i === words.length - 1}/>);
-		entries.push(<Word word={words[i]} colors={colors[i]} setColorWord={setColorWord.bind(null, i)} /*editable={i === words.length - 1}*//>);
+		entries.push(<Word word={words[i]} colors={colors[i]} setColorWord={setColorWord.bind(null, i)} resetErrorState={resetErrorState}/>);
 	}
+
+	const badLetterDivs = [...badLetters].map(bl => <div className="badLetter">{bl}</div>);
 
 	const proposeWord = () => {
 		// get all bad (gray) letters from the last word and add them to "badLetters"
@@ -52,12 +57,14 @@ function App() {
 		for (let i = 0; i < 5; i++) {
 			if (color[i] === ".") {
 				// only add it to the "bad letters" list if it's not already green -- if it is, it must be explicitly excluded from this particular index
-				if (!greens.includes(word[i])) {
+				if (!greens.includes(word[i]) && badLetters.indexOf(word[i]) === -1 && newGray.indexOf(word[i]) === -1) {
 					setBadLetters(badLetters => badLetters += word[i]);
 					newGray += word[i];	
 				}
 			}
 		}
+
+		
 
 		// since 'badLetters' is being available at the beginning of the next rendering,
 		// it has to be extended here manually
@@ -83,10 +90,15 @@ function App() {
 					return b.value - a.value;		// sort largest first
 				});
 
-				setWords(words => [...words, sorted_matches[0].word]);
+				if (sorted_matches.length === 0) {
+					// no word fits the input
+					setErrorState(true);
+				} else {
+					setWords(words => [...words, sorted_matches[0].word]);
 
-				setColors(colors => [...colors, colors.at(-1).replaceAll("y", ".")] );
-			})
+					setColors(colors => [...colors, colors.at(-1).replaceAll("y", ".")] );
+				}				
+			});
 	};
 
 	const handleMouseOver = () => {
@@ -105,6 +117,7 @@ function App() {
 					newWords[words.length - 1] = newWords[words.length - 1] + event.key;
 					return newWords;
 				});
+				resetErrorState();
 			}
 		} else if (event.keyCode === 8) {
 			if (word.length > 0) {
@@ -114,6 +127,7 @@ function App() {
 					newWords[lastIndex] = newWords[lastIndex].substring(0, newWords[lastIndex].length - 1);
 					return newWords;
 				});
+				resetErrorState();
 
 				// set the color of the character that was just removed to "."
 				setColors(colors => {
@@ -126,19 +140,21 @@ function App() {
 		}
 	};
 
-	const onValueChange = (event) => {
-		setBadLetters(event.target.value);
-	};
-
   return (
     <div className="App" onKeyUp={handleKeyUp} tabIndex={-1} ref={htmlDiv}>
-      <header className="App-header" onMouseOver={handleMouseOver}>
+			<header id="badLetters">
+					{ badLetterDivs }
+			</header>
+      <div className="App-header" onMouseOver={handleMouseOver}>
 				{ entries }
-				<input id="badLetters" type="text" value={badLetters} onChange={onValueChange}/>
-      </header>
+      </div>
 			<footer>
 				<div id="footerBar">
-					<button id="showMe" onClick={proposeWord} disabled={words.at(-1).length < 5}>Propose word</button>
+					<div style={{ width: "15vh", visibility: "hidden" }}/>
+					<div>
+						{ errorState && "No word found" }
+					</div>
+					<button id="showMe" onClick={proposeWord} disabled={words.at(-1).length < 5 || errorState}>Propose word</button>
 				</div>
 			</footer>
     </div>
