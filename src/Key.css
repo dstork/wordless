@@ -1,0 +1,18 @@
+.key {
+	min-width: fit-content;
+	/* padding: 5px; */
+	width: 3rem;
+	background-color: #787c7e;
+	font-weight: bold;
+	font-size: 3rem;
+	color: white;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	margin: 4px;
+	cursor: pointer;
+}
+
+.key.wide {
+	width: 7rem;
+}

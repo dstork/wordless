@@ -15,3 +15,4 @@
 * ~~generate a github page for the repo~~
 * write tests, at least for buildRegex.js
 * ~~properly handle the case, where no word is found (due to wrong input e.g.)~~
+* read the word file once, not every time in the button's click handler

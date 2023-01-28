@@ -2,6 +2,8 @@ import { React, useState, useRef } from "react";
 
 import Word from "./Word";
 
+import Key from "./Key";
+
 import buildRegex from './buildRegex';
 
 import wf from "./tooling/wordle_frequency.txt";
@@ -63,8 +65,6 @@ function App() {
 				}
 			}
 		}
-
-		
 
 		// since 'badLetters' is being available at the beginning of the next rendering,
 		// it has to be extended here manually
@@ -145,8 +145,21 @@ function App() {
 			<header id="badLetters">
 					{ badLetterDivs }
 			</header>
-      <div className="App-header" onMouseOver={handleMouseOver}>
+      <div className="Main" onMouseOver={handleMouseOver}>
 				{ entries }
+				<div id="keyboard" style={{ position: "absolute", bottom: "10vh", width: "100vw"}}>
+					<div id="first_line" className="keyboard_line">
+						{ ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].map(k => <Key sKey={k}/>) }
+					</div>
+					<div id="second_line" className="keyboard_line">
+						{ ["A", "S", "D", "F", "G", "H", "J", "K", "L"].map(k => <Key sKey={k}/>) }
+					</div>
+					<div id="third_line" className="keyboard_line">
+						<Key sKey="ENTER" bWide={true}/>
+						{ ["Z", "X", "C", "V", "B", "N", "M"].map(k => <Key sKey={k}/>) }
+						<Key sKey="⌫" bWide={true}/>
+					</div>
+				</div>
       </div>
 			<footer>
 				<div id="footerBar">
