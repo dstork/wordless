@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/wordless/static/css/main.9cc1957c.css",
+    "main.css": "/wordless/static/css/main.5ac07f91.css",
     "main.js": "/wordless/static/js/main.3f074cd4.js",
     "static/js/787.b1882d14.chunk.js": "/wordless/static/js/787.b1882d14.chunk.js",
     "static/media/wordle_frequency.txt": "/wordless/static/media/wordle_frequency.76bfe8268f195cb5b3e8.txt",
     "index.html": "/wordless/index.html",
-    "main.9cc1957c.css.map": "/wordless/static/css/main.9cc1957c.css.map",
+    "main.5ac07f91.css.map": "/wordless/static/css/main.5ac07f91.css.map",
     "main.3f074cd4.js.map": "/wordless/static/js/main.3f074cd4.js.map",
     "787.b1882d14.chunk.js.map": "/wordless/static/js/787.b1882d14.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9cc1957c.css",
+    "static/css/main.5ac07f91.css",
     "static/js/main.3f074cd4.js"
   ]
 }
