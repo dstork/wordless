@@ -1,22 +1,23 @@
 import { React, useState, useRef } from "react";
 
 import Word from "./Word";
-
-import Key from "./Key";
-
+import Keyboard from "./Keyboard";
+import { useRecoilState } from "recoil";
 import buildRegex from './buildRegex';
-
 import wf from "./tooling/wordle_frequency.txt";
-
+import wordState from "./state/wordState";
+import colorState from "./state/colorState";
+import badLetterState from "./state/badLetterState";
 import './App.css';
 
 function App() {
 
-	const [words, setWords] = useState([""]);
+	// const [words, setWords] = useState([""]);
+	const [words, setWords] = useRecoilState(wordState);
 
-	const [colors, setColors] = useState(["....."]);
+	const [colors, setColors] = useRecoilState(colorState);
 
-	const [badLetters, setBadLetters] = useState("");
+	const [badLetters, setBadLetters] = useRecoilState(badLetterState);
 
 	const [errorState, setErrorState] = useState(false);
 
@@ -27,6 +28,11 @@ function App() {
 	};
 
 	const setColorWord = (idx, colors) => {
+		// only the colors for the last word can be changed
+		if (idx !== words.length - 1) {
+			return;
+		}
+
 		setColors(cols => {
 			const newCols = cols.slice();
 			newCols[idx] = colors;
@@ -40,8 +46,6 @@ function App() {
 	for (let i = 0; i < words.length; i++) {
 		entries.push(<Word word={words[i]} colors={colors[i]} setColorWord={setColorWord.bind(null, i)} resetErrorState={resetErrorState}/>);
 	}
-
-	const badLetterDivs = [...badLetters].map(bl => <div className="badLetter">{bl}</div>);
 
 	const proposeWord = () => {
 		// get all bad (gray) letters from the last word and add them to "badLetters"
@@ -106,6 +110,10 @@ function App() {
 	};
 
 	const handleKeyUp = (event) => {
+		if (words.length > 1) {
+			return;
+		}
+
 		// the key should be appended to the current word
 		const isValidLetter = ltr => ltr.match(/^[a-z]$/i);
 		
@@ -140,37 +148,61 @@ function App() {
 		}
 	};
 
+	const keyboardClickHandler = (key) => {
+		if (words.length > 1) {
+			return;
+		}
+
+		const word = words.at(-1);
+
+		if (key === "⌫") {	// BACKSPACE
+			if (word.length > 0) {
+				setWords(words => {
+					const newWords = words.slice();
+					const lastIndex = newWords.length - 1;
+					newWords[lastIndex] = newWords[lastIndex].substring(0, newWords[lastIndex].length - 1);
+					return newWords;
+				});
+			}
+		} else if (key === "⏎") {	// ENTER
+			if (words.at(-1).length === 5) {
+				proposeWord();
+			}
+		} else {
+			// normal key
+			if (word.length < 5) {
+				setWords(words => {
+					const newWords = words.slice();
+					newWords[words.length - 1] = newWords[words.length - 1] + key;
+					return newWords;
+				});
+			}
+		}
+	}
+
   return (
-    <div className="App" onKeyUp={handleKeyUp} tabIndex={-1} ref={htmlDiv}>
-			<header id="badLetters">
-					{ badLetterDivs }
-			</header>
-      <div className="Main" onMouseOver={handleMouseOver}>
-				{ entries }
-				<div id="keyboard" style={{ position: "absolute", bottom: "10vh", width: "100vw"}}>
-					<div id="first_line" className="keyboard_line">
-						{ ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].map(k => <Key sKey={k}/>) }
-					</div>
-					<div id="second_line" className="keyboard_line">
-						{ ["A", "S", "D", "F", "G", "H", "J", "K", "L"].map(k => <Key sKey={k}/>) }
-					</div>
-					<div id="third_line" className="keyboard_line">
-						<Key sKey="ENTER" bWide={true}/>
-						{ ["Z", "X", "C", "V", "B", "N", "M"].map(k => <Key sKey={k}/>) }
-						<Key sKey="⌫" bWide={true}/>
-					</div>
+		<div className="App" onKeyUp={handleKeyUp} tabIndex={-1} ref={htmlDiv}>
+
+			<div className="Main" onMouseOver={handleMouseOver}>
+				<div style={{flex: "1", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+					{ entries }
 				</div>
-      </div>
+				<Keyboard
+					style={{ flex: "0", marginBottom: "3vh", width: "96vw" }}
+					clickHandler={keyboardClickHandler}
+				/>
+			</div>
+
 			<footer>
 				<div id="footerBar">
 					<div style={{ width: "15vh", visibility: "hidden" }}/>
 					<div>
 						{ errorState && "No word found" }
 					</div>
-					<button id="showMe" onClick={proposeWord} disabled={words.at(-1).length < 5 || errorState}>Propose word</button>
+					<button id="showMe" onClick={proposeWord} disabled={words.length > 5 || words.at(-1).length < 5 || errorState}>Propose word</button>
 				</div>
 			</footer>
-    </div>
+		</div>
   );
 }
 

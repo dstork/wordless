@@ -1,20 +1,6 @@
-function buildRegex(words, colors, badLetters) {
+import { getAllYellows } from "./util/Utils";
 
-	const getAllYellows = (words) => {
-		const yellows = [];
-		for (let word_idx = 0; word_idx < words.length; word_idx++) {
-			for (let i = 0; i < 5; i++) {
-				if (colors[word_idx][i] === "y") {
-					// if the same char exists multiple times in a word, we'll have to add it here
-					if (!yellows.includes(words[word_idx][i])) {
-						yellows.push(words[word_idx][i]);
-					}
-				}
-			}
-		}
-		
-		return yellows;
-	};
+function buildRegex(words, colors, badLetters) {
 
 	let regexString = "^";
 	// if there are any chars in badLetters, we need a (negative) lookahead assertion
@@ -24,7 +10,7 @@ function buildRegex(words, colors, badLetters) {
 
 	// for all yellows letters, we need to ensure they're in the word somewhere
   // again, a lookahead assertion is used -- TODO: how to handle multiple matching characters?
-	const yellows = getAllYellows(words);
+	const yellows = getAllYellows(words, colors);
 	for (const yellow of yellows) {
 		regexString += `(?=.*${yellow}.*)`;
 	}

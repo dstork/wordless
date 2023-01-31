@@ -1,18 +1,49 @@
+@media only screen and (max-width: 899px) {
+	.key {
+		flex: 1;
+		font-size: 1.5rem;
+		min-width: 1.5rem;
+		aspect-ratio: 2 / 3;
+		margin: 0.5vw;
+		width: 7.5vw;
+	}
+
+	.key.wide {
+		width: 3.5rem;
+		aspect-ratio: 1.4;
+	}
+}
+
+@media only screen and (min-width: 900px) {
+	.key {
+		font-size: 3rem;
+		min-width: 3rem;
+		margin: 4px;
+	}
+
+	.key.wide {
+		width: 6rem;
+	}
+}
+
 .key {
-	min-width: fit-content;
-	/* padding: 5px; */
-	width: 3rem;
 	background-color: #787c7e;
 	font-weight: bold;
-	font-size: 3rem;
 	color: white;
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
-	margin: 4px;
 	cursor: pointer;
 }
 
-.key.wide {
-	width: 7rem;
+.key.green {
+	background-color: #6aaa64;
+}
+
+.key.yellow {
+	background-color: #c9b458;
+}
+
+.key.absent {
+	background-color: #3d4848;
 }
