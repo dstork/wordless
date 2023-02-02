@@ -173,7 +173,7 @@ function App() {
 			if (word.length < 5) {
 				setWords(words => {
 					const newWords = words.slice();
-					newWords[words.length - 1] = newWords[words.length - 1] + key;
+					newWords[words.length - 1] = newWords[words.length - 1] + key.toLowerCase();
 					return newWords;
 				});
 			}
