@@ -17,5 +17,5 @@
 * ~~properly handle the case, where no word is found (due to wrong input e.g.)~~
 * read the word file once, not every time in the button's click handler
 * add support for German and Spanish (segmented button with country flag for highlight)
-* allow to add multiple rows of failed entries (last resort)
-* fix the bottom bar eating the last keyboard row on iOS
+* ~~allow to add multiple rows of failed entries (last resort)~~
+* ~~fix the bottom bar eating the last keyboard row on iOS~~
