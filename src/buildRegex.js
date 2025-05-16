@@ -1,6 +1,6 @@
 import { getAllYellows } from "./util/Utils";
 
-function buildRegex(words, colors, badLetters) {
+function buildRegex(words, colors, badLetters, greens) {
 
 	let regexString = "^";
 	// if there are any chars in badLetters, we need a (negative) lookahead assertion
@@ -18,11 +18,11 @@ function buildRegex(words, colors, badLetters) {
 	const latest_word_idx = words.length - 1;
 
 	regexString += [0, 1, 2, 3, 4].map(idx => {
-		if (colors[latest_word_idx][idx] === "g") {
+		if (greens[idx] !== ".") {
 			// easist case: the character was already correct, so any word satisfying the pattern will have the same character & hence color
-			return words[latest_word_idx][idx].toLowerCase();
+			return greens[idx].toLowerCase();
 		} else {
-			// check if it is part of bad letters, and if not, explicitly exclude it 
+			// check if it is part of bad letters, and if not, explicitly exclude it
 			// if (badLetters.indexOf(words[latest_word_idx][idx]) === -1) {
 			// 	return `[^${words[latest_word_idx][idx]}]`;			// what is this case for? there is already the lookahead in line 21
 			// } else {
@@ -34,7 +34,7 @@ function buildRegex(words, colors, badLetters) {
 					column_yellows.push(words[word_idx][idx].toLowerCase());
 				}
 			}
-			
+
 			if (column_yellows.length > 0) {
 				// this case depends on the existence of "free" (.) fields; if there are none then
 				// the solution is a permutation of the yellow fields

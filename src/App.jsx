@@ -21,6 +21,8 @@ function App() {
 
 	const [errorState, setErrorState] = useState(false);
 
+	const [errorMessage, setErrorMessage] = useState("");
+
 	const htmlDiv = useRef(null);
 
 	const replaceLtr = (word, idx, ltr) => {
@@ -48,31 +50,70 @@ function App() {
 	}
 
 	const proposeWord = () => {
-		// get all bad (gray) letters from the last word and add them to "badLetters"
-		const word = words.at(-1);
-		const color = colors.at(-1);
+		// sanity check - there cannot be more than one green letter per position
+		// also, a letter that is yellow/green in one word must be yellow/green in all of them
+		const greens = [".", ".", ".", ".", "."];
+		let yellowLetters = "";
+		let badLetters = "";
+		for (let i=0; i < words.length; i++) {
+			const w = words[i];
+			const c = colors[i];
 
-		const greens = [];
-		for (let i = 0; i < 5; i++) {
-			if (color[i] === "g") {
-				greens.push(word[i]);
-			}
-		}
-
-		let newGray = "";
-		for (let i = 0; i < 5; i++) {
-			if (color[i] === ".") {
-				// only add it to the "bad letters" list if it's not already green -- if it is, it must be explicitly excluded from this particular index
-				if (!greens.includes(word[i]) && badLetters.indexOf(word[i]) === -1 && newGray.indexOf(word[i]) === -1) {
-					setBadLetters(badLetters => badLetters += word[i]);
-					newGray += word[i];	
+			for (let j=0; j < 5; j++) {
+				if (c[j] === "g") {
+					if (greens[j] === ".") {
+						greens[j] = w[j];
+					} else if (greens[j] !== w[j]) {
+						// this is a problem
+						setErrorState(true);
+						setErrorMessage("Inconsistent input - multiple greens in the same position");
+						return;
+					}
+				} else if (c[j] === "y") {
+					if (yellowLetters.indexOf(w[j]) === -1) {
+						yellowLetters += w[j];
+					}
+					if (badLetters.indexOf(w[j]) !== -1) {
+						setErrorState(true);
+						setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and yellow`);
+						return;
+					}
+				} else if (c[j] === ".") {
+					// only a problem if this is the first occurrence of the letter in the word
+					if (words.indexOf(w[j]) === j) {
+						if (greens.indexOf(w[j]) !== -1) {
+							setErrorState(true);
+							setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and green`);
+							return;
+						}
+						if (yellowLetters.indexOf(w[j]) !== -1) {
+							setErrorState(true);
+							setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and yellow`);
+							return;
+						}
+					}
+					if (badLetters.indexOf(w[j]) === -1) {
+						badLetters += w[j];
+					}
 				}
 			}
 		}
+		// What if a letter is already green, but the second occurrence is gray? Then we can't add it to the "bad letters" list
+
+		// let newGray = "";
+		// for (let i = 0; i < 5; i++) {
+		// 	if (color[i] === ".") {
+		// 		// only add it to the "bad letters" list if it's not already green -- if it is, it must be explicitly excluded from this particular index
+		// 		if (!greens.includes(word[i]) && badLetters.indexOf(word[i]) === -1 && newGray.indexOf(word[i]) === -1) {
+		// 			setBadLetters(badLetters => badLetters += word[i]);
+		// 			newGray += word[i];
+		// 		}
+		// 	}
+		// }
 
 		// since 'badLetters' is being available at the beginning of the next rendering,
 		// it has to be extended here manually
-		const regex = buildRegex(words, colors, badLetters + newGray);
+		const regex = buildRegex(words, colors, badLetters, greens);
 
 		// filter all words satisfying this condition/regex
 		fetch(wf)
@@ -89,7 +130,7 @@ function App() {
 					return {
 						word: split[0],
 						value: split.length > 1 ? parseInt(split[1], 10) : 1
-					};	
+					};
 				}).sort( (a,b) => {
 					return b.value - a.value;		// sort largest first
 				});
@@ -97,11 +138,12 @@ function App() {
 				if (sorted_matches.length === 0) {
 					// no word fits the input
 					setErrorState(true);
+					setErrorMessage("No word found");
 				} else {
 					setWords(words => [...words, sorted_matches[0].word]);
 
 					setColors(colors => [...colors, colors.at(-1).replaceAll("y", ".")] );
-				}				
+				}
 			});
 	};
 
@@ -110,13 +152,13 @@ function App() {
 	};
 
 	const handleKeyUp = (event) => {
-		if (words.length > 1) {
-			return;
-		}
+		// if (words.length > 1) {
+		// 	return;
+		// }
 
 		// the key should be appended to the current word
 		const isValidLetter = ltr => ltr.match(/^[a-z]$/i);
-		
+
 		const word = words.at(-1);
 		if (isValidLetter(event.key)) {
 			if (word.length < 5) {
@@ -149,9 +191,9 @@ function App() {
 	};
 
 	const keyboardClickHandler = (key) => {
-		if (words.length > 1) {
-			return;
-		}
+		// if (words.length > 1) {
+		// 	return;
+		// }
 
 		const word = words.at(-1);
 
@@ -186,7 +228,18 @@ function App() {
 			<div className="Main" onMouseOver={handleMouseOver}>
 				<div style={{flex: "1", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
 					{ entries }
+					<div
+					className="plusButton"
+					onClick={() => {
+						setWords(words => [...words, ""]);
+						setColors(colors => [...colors, "....."]);
+					}}
+					visibility={words.at(-1).length === 5 ? "visible" : "hidden"}
+				>
+					+
+			</div>
 				</div>
+
 				<Keyboard
 					style={{ flex: "0", marginBottom: "3vh", width: "96vw" }}
 					clickHandler={keyboardClickHandler}
@@ -197,7 +250,7 @@ function App() {
 				<div id="footerBar">
 					<div style={{ width: "15vh", visibility: "hidden" }}/>
 					<div>
-						{ errorState && "No word found" }
+						{ errorState && errorMessage }
 					</div>
 					<button id="showMe" onClick={proposeWord} disabled={words.length > 5 || words.at(-1).length < 5 || errorState}>Propose word</button>
 				</div>

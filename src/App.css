@@ -2,7 +2,7 @@
   text-align: center;
 	background-color: #282c34;
 	color: white;
-	display: flex; 
+	display: flex;
 	flex-direction: column;
 }
 
@@ -54,4 +54,21 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.plusButton {
+	background-color: #6aaa64;
+	border: 0px;
+	border-radius: 50%;
+	width: 5vh;
+	aspect-ratio: 1;
+	/* display: flex;
+	justify-content: center;
+	align-items: center; */
+	text-align: center;
+	line-height: 4.5vh;
+	margin-top: 1vh;
+	/* margin: auto; */
+	font-weight: bold;
+	font-size: xx-large;
 }
