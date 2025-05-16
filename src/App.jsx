@@ -12,12 +12,9 @@ import './App.css';
 
 function App() {
 
-	// const [words, setWords] = useState([""]);
 	const [words, setWords] = useRecoilState(wordState);
 
 	const [colors, setColors] = useRecoilState(colorState);
-
-	const [badLetters, setBadLetters] = useRecoilState(badLetterState);
 
 	const [errorState, setErrorState] = useState(false);
 
@@ -30,11 +27,6 @@ function App() {
 	};
 
 	const setColorWord = (idx, colors) => {
-		// only the colors for the last word can be changed
-		if (idx !== words.length - 1) {
-			return;
-		}
-
 		setColors(cols => {
 			const newCols = cols.slice();
 			newCols[idx] = colors;
@@ -79,7 +71,7 @@ function App() {
 						return;
 					}
 				} else if (c[j] === ".") {
-					// only a problem if this is the first occurrence of the letter in the word
+					// What if a letter is already green, but the second occurrence is gray? Then we can't add it to the "bad letters" list
 					if (words.indexOf(w[j]) === j) {
 						if (greens.indexOf(w[j]) !== -1) {
 							setErrorState(true);
@@ -98,21 +90,6 @@ function App() {
 				}
 			}
 		}
-		// What if a letter is already green, but the second occurrence is gray? Then we can't add it to the "bad letters" list
-
-		// let newGray = "";
-		// for (let i = 0; i < 5; i++) {
-		// 	if (color[i] === ".") {
-		// 		// only add it to the "bad letters" list if it's not already green -- if it is, it must be explicitly excluded from this particular index
-		// 		if (!greens.includes(word[i]) && badLetters.indexOf(word[i]) === -1 && newGray.indexOf(word[i]) === -1) {
-		// 			setBadLetters(badLetters => badLetters += word[i]);
-		// 			newGray += word[i];
-		// 		}
-		// 	}
-		// }
-
-		// since 'badLetters' is being available at the beginning of the next rendering,
-		// it has to be extended here manually
 		const regex = buildRegex(words, colors, badLetters, greens);
 
 		// filter all words satisfying this condition/regex
@@ -152,10 +129,6 @@ function App() {
 	};
 
 	const handleKeyUp = (event) => {
-		// if (words.length > 1) {
-		// 	return;
-		// }
-
 		// the key should be appended to the current word
 		const isValidLetter = ltr => ltr.match(/^[a-z]$/i);
 
@@ -186,15 +159,17 @@ function App() {
 					newColors[lastIndex] = replaceLtr(newColors[lastIndex], words[lastIndex].length - 1, ".");
 					return newColors;
 				});
+			} else {
+				// if there are more than one word, and the last word is empty, remove it
+				if (words.length > 1 && words.at(-1).length === 0) {
+					setWords(words => words.slice(0, -1));
+					setColors(colors => colors.slice(0, -1));
+				}
 			}
 		}
 	};
 
 	const keyboardClickHandler = (key) => {
-		// if (words.length > 1) {
-		// 	return;
-		// }
-
 		const word = words.at(-1);
 
 		if (key === "⌫") {	// BACKSPACE
@@ -205,6 +180,12 @@ function App() {
 					newWords[lastIndex] = newWords[lastIndex].substring(0, newWords[lastIndex].length - 1);
 					return newWords;
 				});
+			} else {
+				// if there are more than one word, and the last word is empty, remove it
+				if (words.length > 1 && words.at(-1).length === 0) {
+					setWords(words => words.slice(0, -1));
+					setColors(colors => colors.slice(0, -1));
+				}
 			}
 		} else if (key === "⏎") {	// ENTER
 			if (words.at(-1).length === 5) {
@@ -228,16 +209,15 @@ function App() {
 			<div className="Main" onMouseOver={handleMouseOver}>
 				<div style={{flex: "1", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
 					{ entries }
-					<div
-					className="plusButton"
-					onClick={() => {
-						setWords(words => [...words, ""]);
-						setColors(colors => [...colors, "....."]);
-					}}
-					visibility={words.at(-1).length === 5 ? "visible" : "hidden"}
-				>
-					+
-			</div>
+					{ words.at(-1).length === 5 && <div
+						className="plusButton"
+						onClick={() => {
+							setWords(words => [...words, ""]);
+							setColors(colors => [...colors, "....."]);
+						}}
+					>
+						+
+					</div> }
 				</div>
 
 				<Keyboard
