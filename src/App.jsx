@@ -16,6 +16,8 @@ function App() {
 
 	const [colors, setColors] = useRecoilState(colorState);
 
+	const [_, setBadLetters] = useRecoilState(badLetterState);
+
 	const [errorState, setErrorState] = useState(false);
 
 	const [errorMessage, setErrorMessage] = useState("");
@@ -43,7 +45,7 @@ function App() {
 
 	const proposeWord = () => {
 		// sanity check - there cannot be more than one green letter per position
-		// also, a letter that is yellow/green in one word must be yellow/green in all of them
+		// also, a letter that is yellow/green in one word must be yellow/green at least for one instance in all of them
 		const greens = [".", ".", ".", ".", "."];
 		let yellowLetters = "";
 		let badLetters = "";
@@ -62,34 +64,23 @@ function App() {
 						return;
 					}
 				} else if (c[j] === "y") {
-					if (yellowLetters.indexOf(w[j]) === -1) {
+					if (!yellowLetters.includes(w[j])) {
 						yellowLetters += w[j];
 					}
-					if (badLetters.indexOf(w[j]) !== -1) {
+					if (badLetters.includes(w[j])) {
 						setErrorState(true);
 						setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and yellow`);
 						return;
 					}
 				} else if (c[j] === ".") {
-					// What if a letter is already green, but the second occurrence is gray? Then we can't add it to the "bad letters" list
-					if (words.indexOf(w[j]) === j) {
-						if (greens.indexOf(w[j]) !== -1) {
-							setErrorState(true);
-							setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and green`);
-							return;
-						}
-						if (yellowLetters.indexOf(w[j]) !== -1) {
-							setErrorState(true);
-							setErrorMessage(`Inconsistent input - letter ${w[j]} both gray and yellow`);
-							return;
-						}
-					}
-					if (badLetters.indexOf(w[j]) === -1) {
+					// only add to bad letters if not already yellow or green
+					if (!(badLetters.includes(w[j]) || yellowLetters.includes(w[j]) || greens.includes(w[j]))) {
 						badLetters += w[j];
 					}
 				}
 			}
 		}
+		setBadLetters(badLetters);
 		const regex = buildRegex(words, colors, badLetters, greens);
 
 		// filter all words satisfying this condition/regex
@@ -232,7 +223,7 @@ function App() {
 					<div>
 						{ errorState && errorMessage }
 					</div>
-					<button id="showMe" onClick={proposeWord} disabled={words.length > 5 || words.at(-1).length < 5 || errorState}>Propose word</button>
+					<button id="showMe" onClick={proposeWord} disabled={words.at(-1).length < 5 || errorState}>Propose word</button>
 				</div>
 			</footer>
 		</div>

@@ -19,3 +19,6 @@
 * add support for German and Spanish (segmented button with country flag for highlight)
 * ~~allow to add multiple rows of failed entries (last resort)~~
 * ~~fix the bottom bar eating the last keyboard row on iOS~~
+* extend logic at some point:
+ * two yellows from the same word have to be treated differently than two yellows from two different words
+ * need to track which are still valid, and which are already green in later entries/words

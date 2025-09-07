@@ -6,6 +6,7 @@ import badLetterState from "./state/badLetterState";
 import { getAllYellows, getAllGreens } from "./util/Utils";
 
 import "./Key.css";
+import PropTypes from "prop-types";
 
 function Key({sKey, bWide, style, clickHandler}) {
 
@@ -16,15 +17,15 @@ function Key({sKey, bWide, style, clickHandler}) {
 	const colorClass = (() => {
 		const greens = getAllGreens(words, colors);
 		const yellows = getAllYellows(words, colors);
-		if (greens.indexOf(sKey.toLowerCase()) !== -1) {
+		if (greens.includes(sKey.toLowerCase())) {
 			return "green";
-		} else if (yellows.indexOf(sKey.toLowerCase()) !== -1) {
+		} else if (yellows.includes(sKey.toLowerCase())) {
 			return "yellow";
-		} else if (badLetters.indexOf(sKey.toLowerCase()) !== -1) {
+		} else if (badLetters.includes(sKey.toLowerCase())) {
 			return "absent";
 		} else {
 			return;
-		}		
+		}
 	})();
 
 	const onClick = () => {
@@ -49,5 +50,12 @@ function Key({sKey, bWide, style, clickHandler}) {
 		</div>
 	);
 }
+
+Key.propTypes = {
+	sKey: PropTypes.string.isRequired,
+	bWide: PropTypes.bool,
+	style: PropTypes.object,
+	clickHandler: PropTypes.func.isRequired,
+};
 
 export default Key;
